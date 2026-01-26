@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <title>Healing Soul AI - 治愈系AI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              retro: {
+                cream: '#F2E9D8',
+                paper: '#FFFDF5',
+                orange: '#D95D39',
+                mustard: '#F0A202',
+                dark: '#1A1A1A',
+                grey: '#8C8C8C',
+                green: '#5E8C61'
+              }
+            },
+            fontFamily: {
+              sans: ['"Space Grotesk"', '"Noto Sans SC"', 'sans-serif'],
+              mono: ['"Space Mono"', '"Noto Sans SC"', 'monospace'],
+            },
+            boxShadow: {
+              'hard': '4px 4px 0px 0px #1A1A1A',
+              'hard-sm': '2px 2px 0px 0px #1A1A1A',
+              'hard-lg': '6px 6px 0px 0px #1A1A1A',
+            },
+            backgroundImage: {
+              'grid-pattern': "linear-gradient(to right, #1A1A1A10 1px, transparent 1px), linear-gradient(to bottom, #1A1A1A10 1px, transparent 1px)",
+            },
+            spacing: {
+              'safe-bottom': 'env(safe-area-inset-bottom)',
+            }
+          }
+        }
+      }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+      body {
+        font-family: 'Space Mono', 'Noto Sans SC', monospace;
+        background-color: #F2E9D8;
+        color: #1A1A1A;
+        overflow: hidden; 
+        overscroll-behavior-y: none; /* Prevent rubber banding on mobile */
+      }
+      .no-scrollbar::-webkit-scrollbar {
+        display: none;
+      }
+      .no-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+      /* Retro scanline effect overlay */
+      .scanlines {
+        background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(0,0,0,0.02) 50%, rgba(0,0,0,0.02));
+        background-size: 100% 4px;
+        pointer-events: none;
+      }
+      /* Ensure Chinese aligns well with retro fonts */
+      input, textarea, button {
+        font-family: 'Space Mono', 'Noto Sans SC', monospace;
+      }
+      /* Safe Area Utilities */
+      .pb-safe {
+        padding-bottom: env(safe-area-inset-bottom);
+      }
+      .mb-safe {
+        margin-bottom: env(safe-area-inset-bottom);
+      }
+      .bottom-safe {
+        bottom: env(safe-area-inset-bottom);
+      }
+    </style>
+    <script type="importmap">
+    {
+      "imports": {
+        "react/": "https://esm.sh/react@^19.2.3/",
+        "react": "https://esm.sh/react@^19.2.3",
+        "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+        "@google/genai": "https://esm.sh/@google/genai@^1.38.0"
+      }
+    }
+    </script>
+  <link rel="stylesheet" href="/index.css">
+</head>
+  <body>
+    <div id="root"></div>
+  <script type="module" src="/index.tsx"></script>
+</body>
+</html>
