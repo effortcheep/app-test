@@ -18,10 +18,10 @@ const CharacterList: React.FC<CharacterListProps> = ({ characters, onSelectChara
         <div className="flex justify-between items-center">
           <div>
              <h1 className="text-xl font-sans font-bold text-retro-dark uppercase tracking-tighter">我的AI伙伴</h1>
-             <p className="text-[10px] font-mono text-retro-orange mt-1">> 数据库访问授权 GRANTED</p>
+             <p className="text-[10px] font-mono text-retro-orange mt-1">{'> 数据库访问授权 GRANTED'}</p>
           </div>
-          <button 
-            onClick={onAddNew} 
+          <button
+            onClick={onAddNew}
             className="bg-retro-orange text-white border-2 border-retro-dark p-2 hover:bg-retro-dark transition-colors shadow-hard-sm active:translate-x-[2px] active:translate-y-[2px] active:shadow-none"
           >
              <Icons.Plus className="w-5 h-5" />
@@ -45,7 +45,7 @@ const CharacterList: React.FC<CharacterListProps> = ({ characters, onSelectChara
 
             {characters.map((char) => (
             <div key={char.id} className="relative bg-white border-2 border-retro-dark flex flex-col shadow-hard hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-hard-lg transition-all group cursor-pointer" onClick={() => onSelectCharacter(char)}>
-                
+
                 {/* Active Indicator Mock */}
                 <div className="absolute top-2 right-2 w-2 h-2 bg-retro-green rounded-full border border-retro-dark animate-pulse"></div>
 
@@ -61,7 +61,7 @@ const CharacterList: React.FC<CharacterListProps> = ({ characters, onSelectChara
                 <div className="p-3 flex flex-col flex-1">
                     <h3 className="text-sm font-bold font-sans text-retro-dark uppercase truncate">{char.name}</h3>
                     <span className="text-[9px] font-mono bg-retro-cream border border-retro-dark px-1 w-max my-1 text-retro-grey truncate max-w-full">{char.role}</span>
-                    
+
                     <div className="mt-auto pt-2 border-t border-dotted border-retro-grey flex justify-between items-end">
                         <span className="text-[9px] font-mono text-retro-orange">运行: {char.usageCount || 0}</span>
                         <div className="flex gap-2">

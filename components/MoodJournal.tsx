@@ -33,8 +33,8 @@ const MoodJournal: React.FC = () => {
                     <div className="flex items-end justify-between h-32 gap-2 px-2">
                         {history.map((h, i) => (
                             <div key={i} className="flex flex-col items-center gap-2 flex-1 group">
-                                <div 
-                                    className={`w-full bg-retro-dark transition-all group-hover:bg-retro-orange relative`} 
+                                <div
+                                    className={`w-full bg-retro-dark transition-all group-hover:bg-retro-orange relative`}
                                     style={{ height: `${h.count * 10}%` }}
                                 >
                                     <div className="absolute -top-6 left-1/2 -translate-x-1/2 text-[10px] opacity-0 group-hover:opacity-100 font-mono bg-retro-dark text-white px-1">{h.mood}</div>
@@ -68,7 +68,7 @@ const MoodJournal: React.FC = () => {
                             </div>
                             <div>
                                 <p className="text-xs font-mono text-retro-dark mb-1">{log.note}</p>
-                                <p className="text-[10px] font-mono text-retro-grey bg-retro-cream px-1 inline-block">>> {log.response}</p>
+                                <p className="text-[10px] font-mono text-retro-grey bg-retro-cream px-1 inline-block">{`>> ${log.response}`}</p>
                             </div>
                         </div>
                     ))}
