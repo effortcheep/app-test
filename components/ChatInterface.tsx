@@ -61,7 +61,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ character, onBack, userAv
         const emotionPromise = analyzeEmotion(userMsg.text);
         let fullResponse = '';
         const stream = sendMessageStream(userMsg.text);
-        
+
         const aiMsgId = (Date.now() + 1).toString();
         setMessages(prev => [...prev, {
             id: aiMsgId,
@@ -77,7 +77,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ character, onBack, userAv
 
         const detectedEmotion = await emotionPromise;
         setCurrentEmotion(detectedEmotion);
-        
+
         // Show topics for negative emotions
         if (['Sadness', 'Anxiety', 'Anger', 'Tired'].includes(detectedEmotion)) {
             const topics = await suggestTopics(detectedEmotion);
@@ -104,7 +104,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ character, onBack, userAv
       handleSendMessage();
     }
   };
-  
+
   const handleAutoResize = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
       setInputText(e.target.value);
       e.target.style.height = 'auto';
@@ -162,8 +162,8 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ character, onBack, userAv
                     <div className={`max-w-[85%] relative group ${isUser ? 'items-end flex flex-col' : ''}`}>
                         {/* Bubble */}
                         <div className={`px-5 py-4 text-sm font-sans leading-relaxed border-2 border-retro-dark shadow-hard ${
-                            isUser 
-                            ? 'bg-retro-orange text-white' 
+                            isUser
+                            ? 'bg-retro-orange text-white'
                             : 'bg-white text-retro-dark'
                         }`}>
                             {msg.text}
@@ -186,19 +186,19 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ character, onBack, userAv
                  </div>
             </div>
         )}
-        
+
         {/* Suggested Topics */}
         {showTopics && !isLoading && suggestedTopics.length > 0 && (
              <div className="flex flex-col items-center gap-3 mt-6 border-t-2 border-dashed border-retro-grey/30 pt-4">
                  <p className="text-[10px] font-mono text-retro-grey uppercase tracking-widest bg-retro-cream px-2 -mt-7">建议协议 (SUGGESTION_PROTOCOL)</p>
                  <div className="flex flex-wrap justify-center gap-3">
                      {suggestedTopics.map((topic, i) => (
-                         <button 
+                         <button
                             key={i}
                             onClick={() => { setInputText(topic); setShowTopics(false); }}
                             className="text-xs font-sans bg-retro-paper border-2 border-retro-dark text-retro-dark px-3 py-2 hover:bg-retro-mustard hover:shadow-hard-sm transition-all"
                          >
-                             > {topic}
+                            {`> ${topic}`}
                          </button>
                      ))}
                  </div>
@@ -223,12 +223,12 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ character, onBack, userAv
             rows={1}
             className="flex-1 bg-transparent border-none focus:ring-0 text-sm font-sans text-retro-dark resize-none max-h-32 py-3 px-3 placeholder:text-retro-grey/50"
           />
-          <button 
+          <button
             onClick={handleSendMessage}
             disabled={!inputText.trim() || isLoading}
             className={`p-3 border-l-2 border-retro-dark transition-all uppercase font-bold text-xs tracking-wider ${
-                inputText.trim() && !isLoading 
-                ? 'bg-retro-orange text-white hover:bg-retro-dark' 
+                inputText.trim() && !isLoading
+                ? 'bg-retro-orange text-white hover:bg-retro-dark'
                 : 'bg-gray-100 text-gray-300'
             }`}
           >
