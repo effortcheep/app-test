@@ -1,15 +1,22 @@
 import React from 'react';
 import { Icons } from './ui/Icon';
 
-const MoodJournal: React.FC = () => {
-    // Mock Data
+interface MoodJournalProps {
+    onBack: () => void;
+}
+
+const MoodJournal: React.FC<MoodJournalProps> = ({ onBack }) => {
+    // Mapping emotions to numeric values (1-5 scale) for equalizer visual
+    // 5: Joy (High Energy)
+    // 3: Neutral (Mid)
+    // 1-2: Negative (Low Energy)
     const history = [
-        { date: '10/24', mood: 'Joy', count: 5 },
-        { date: '10/25', mood: 'Anxiety', count: 8 },
-        { date: '10/26', mood: 'Neutral', count: 3 },
-        { date: '10/27', mood: 'Sadness', count: 6 },
-        { date: '10/28', mood: 'Joy', count: 4 },
-        { date: 'Today', mood: 'Joy', count: 7 },
+        { date: '10/24', mood: 'Joy', value: 5, label: 'Joy' },
+        { date: '10/25', mood: 'Anxiety', value: 2, label: 'Anx' },
+        { date: '10/26', mood: 'Neutral', value: 3, label: 'Mid' },
+        { date: '10/27', mood: 'Sadness', value: 1, label: 'Sad' },
+        { date: '10/28', mood: 'Anger', value: 2, label: 'Ang' },
+        { date: 'Today', mood: 'Joy', value: 5, label: 'Joy' },
     ];
 
     const logs = [
@@ -19,27 +26,63 @@ const MoodJournal: React.FC = () => {
 
     return (
         <div className="flex flex-col h-full bg-retro-cream">
-            <header className="px-6 py-6 border-b-2 border-retro-dark bg-retro-paper">
-                <div className="flex justify-between items-center">
-                    <h1 className="text-xl font-bold font-sans uppercase">情绪日记</h1>
-                    <button className="text-xs font-mono border border-retro-dark px-2 py-1 hover:bg-retro-mustard">最近7天</button>
+            <header className="px-4 py-4 border-b-2 border-retro-dark bg-retro-paper flex items-center justify-between sticky top-0 z-10 shadow-hard-sm flex-none">
+                <div className="flex items-center gap-3">
+                    <button onClick={onBack} className="p-1 -ml-1 hover:bg-retro-dark hover:text-white transition-colors rounded-sm">
+                        <Icons.ChevronLeft className="w-6 h-6" />
+                    </button>
+                    <h1 className="text-lg font-bold font-sans uppercase">情绪日记</h1>
                 </div>
+                <button className="text-[10px] font-mono border-2 border-retro-dark px-2 py-1 hover:bg-retro-mustard bg-white">最近7天</button>
             </header>
 
             <div className="flex-1 overflow-y-auto p-4 bg-grid-pattern bg-[length:40px_40px]">
-                {/* Chart Mockup */}
+
+                {/* Volume/Equalizer Style Chart */}
                 <div className="bg-white border-2 border-retro-dark p-4 shadow-hard mb-6">
-                    <h3 className="text-xs font-bold font-sans uppercase mb-4 text-retro-grey">趋势分析 (TREND)</h3>
-                    <div className="flex items-end justify-between h-32 gap-2 px-2">
+                    <h3 className="text-xs font-bold font-sans uppercase mb-4 text-retro-grey border-b border-dashed border-retro-grey pb-2 flex justify-between">
+                        <span>情绪律动 (RHYTHM)</span>
+                        <span className="text-[10px]">EQ-Visualizer</span>
+                    </h3>
+
+                    <div className="flex justify-between items-end h-48 gap-2 px-1">
                         {history.map((h, i) => (
-                            <div key={i} className="flex flex-col items-center gap-2 flex-1 group">
-                                <div
-                                    className={`w-full bg-retro-dark transition-all group-hover:bg-retro-orange relative`}
-                                    style={{ height: `${h.count * 10}%` }}
-                                >
-                                    <div className="absolute -top-6 left-1/2 -translate-x-1/2 text-[10px] opacity-0 group-hover:opacity-100 font-mono bg-retro-dark text-white px-1">{h.mood}</div>
+                            <div key={i} className="flex flex-col items-center justify-end h-full gap-2 flex-1 group min-w-0">
+                                {/* Label Bubble */}
+                                <div className={`px-1 py-0.5 border border-retro-dark text-[9px] font-mono font-bold uppercase mb-auto whitespace-nowrap overflow-hidden text-ellipsis max-w-full ${
+                                    h.value >= 4 ? 'bg-retro-orange text-white' : 'bg-retro-cream text-retro-dark'
+                                }`}>
+                                    {h.label}
                                 </div>
-                                <span className="text-[9px] font-mono text-retro-grey uppercase">{h.date}</span>
+
+                                {/* The Equalizer Bar */}
+                                <div className="flex flex-col gap-1 w-full max-w-[28px]">
+                                    {/* Generate 5 blocks */}
+                                    {Array.from({ length: 5 }).map((_, blockIndex) => {
+                                        // 0 is top, 4 is bottom
+                                        // If value is 5, we fill all. If 1, we fill index 4.
+                                        const threshold = 5 - h.value;
+                                        const isActive = blockIndex >= threshold;
+
+                                        // Determine color based on position
+                                        let bgClass = "bg-retro-grey/10 border border-retro-grey/20"; // Inactive
+                                        if (isActive) {
+                                            if (blockIndex === 0) bgClass = "bg-retro-orange border border-retro-dark"; // Peak
+                                            else if (blockIndex <= 2) bgClass = "bg-retro-mustard border border-retro-dark"; // Mid
+                                            else bgClass = "bg-retro-dark border border-retro-dark"; // Base
+                                        }
+
+                                        return (
+                                            <div
+                                                key={blockIndex}
+                                                className={`h-4 w-full rounded-[1px] transition-all duration-300 ${bgClass}`}
+                                            ></div>
+                                        );
+                                    })}
+                                </div>
+
+                                {/* Date */}
+                                <span className="text-[9px] font-mono text-retro-grey uppercase tracking-tighter truncate w-full text-center">{h.date}</span>
                             </div>
                         ))}
                     </div>
@@ -58,7 +101,7 @@ const MoodJournal: React.FC = () => {
                 </div>
 
                 {/* Logs List */}
-                <div className="space-y-3 pb-24">
+                <div className="space-y-3">
                     <h3 className="text-xs font-bold font-sans uppercase mb-2 border-b-2 border-retro-dark inline-block">今日记录</h3>
                     {logs.map((log, i) => (
                         <div key={i} className="bg-white border-2 border-retro-dark p-3 shadow-hard-sm flex gap-3">
@@ -73,6 +116,9 @@ const MoodJournal: React.FC = () => {
                         </div>
                     ))}
                 </div>
+
+                {/* Spacer for Floating Music Button & Safe Area */}
+                <div className="h-24 pb-safe"></div>
             </div>
         </div>
     );

@@ -7,9 +7,10 @@ interface ProfileScreenProps {
     onLogout: () => void;
     onOpenMood?: () => void;
     onOpenSettings?: () => void;
+    onOpenFavorites?: () => void;
 }
 
-const ProfileScreen: React.FC<ProfileScreenProps> = ({ user, onLogout, onOpenMood, onOpenSettings }) => {
+const ProfileScreen: React.FC<ProfileScreenProps> = ({ user, onLogout, onOpenMood, onOpenSettings, onOpenFavorites }) => {
     return (
         <div className="flex flex-col h-full bg-retro-cream">
             {/* Header / ID Card */}
@@ -46,12 +47,12 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ user, onLogout, onOpenMoo
 
                 {/* Function List */}
                 <div className="space-y-3 mb-8">
-                    <div className="bg-white border-2 border-retro-dark p-4 shadow-hard flex items-center justify-between cursor-pointer hover:bg-retro-paper transition-colors group">
+                    <div onClick={onOpenFavorites} className="bg-white border-2 border-retro-dark p-4 shadow-hard flex items-center justify-between cursor-pointer hover:bg-retro-paper transition-colors group">
                         <div className="flex items-center gap-3">
                             <div className="p-1.5 bg-retro-mustard/20 border border-retro-dark group-hover:bg-retro-mustard transition-colors">
                                 <Icons.Heart className="w-4 h-4 text-retro-dark" />
                             </div>
-                            <span className="font-mono text-sm font-bold text-retro-dark uppercase">收藏夹</span>
+                            <span className="font-mono text-sm font-bold text-retro-dark uppercase">收藏夹 (FAVORITES)</span>
                         </div>
                         <Icons.ChevronRight className="w-4 h-4 text-retro-grey" />
                     </div>

@@ -33,7 +33,7 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin }) => {
 
         <div className="mb-8 border-b-2 border-retro-dark pb-4">
           <h1 className="text-3xl font-sans font-bold text-retro-dark tracking-tighter uppercase">Healing Soul<span className="text-retro-orange">.AI</span></h1>
-          <p className="text-retro-grey text-xs font-mono mt-2">{'> 系统就绪 SYSTEM_READY'}<br/>{'> 情感模块已加载 MODULE_LOADED'}</p>
+          <p className="text-retro-grey text-xs font-mono mt-2">{`> 系统就绪 SYSTEM_READY`}<br/>{`> 情感模块已加载 MODULE_LOADED`}</p>
         </div>
 
         <div className="flex border-2 border-retro-dark mb-8 bg-retro-cream">

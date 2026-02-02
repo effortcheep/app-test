@@ -15,8 +15,8 @@ const CharacterDetail: React.FC<CharacterDetailProps> = ({ character, onBack, on
     <div className="flex flex-col h-full bg-retro-cream relative">
       <div className="absolute top-0 w-full h-48 bg-retro-mustard/20 -z-0"></div>
       
-      {/* Header */}
-      <header className="px-4 py-4 flex justify-between items-center z-10">
+      {/* Header - Increased z-index to 30 to ensure dropdown appears above content */}
+      <header className="px-4 py-4 flex justify-between items-center z-30 relative">
          <button onClick={onBack} className="p-2 bg-white border-2 border-retro-dark shadow-hard-sm hover:translate-y-1 hover:shadow-none transition-all">
              <Icons.ChevronLeft className="w-5 h-5" />
          </button>
@@ -24,7 +24,7 @@ const CharacterDetail: React.FC<CharacterDetailProps> = ({ character, onBack, on
              <button className="p-2 bg-white border-2 border-retro-dark shadow-hard-sm hover:translate-y-1 hover:shadow-none transition-all">
                  <Icons.MoreVertical className="w-5 h-5" />
              </button>
-             {/* Dropdown Menu Mock */}
+             {/* Dropdown Menu */}
              <div className="absolute right-0 top-12 bg-white border-2 border-retro-dark shadow-hard hidden group-hover:block w-32">
                  <button onClick={() => onEdit(character)} className="w-full text-left px-4 py-2 hover:bg-retro-cream font-mono text-xs flex gap-2 items-center"><Icons.Edit className="w-3 h-3"/> 编辑</button>
                  <button onClick={() => onDelete(character.id)} className="w-full text-left px-4 py-2 hover:bg-red-50 text-red-600 font-mono text-xs flex gap-2 items-center"><Icons.Trash className="w-3 h-3"/> 删除</button>
@@ -32,7 +32,8 @@ const CharacterDetail: React.FC<CharacterDetailProps> = ({ character, onBack, on
          </div>
       </header>
 
-      <div className="flex-1 overflow-y-auto px-6 pt-4 pb-24 z-10">
+      {/* Content - Increased top padding (pt-16) to accommodate the avatar popping out (-top-12) */}
+      <div className="flex-1 overflow-y-auto px-6 pt-16 pb-24 z-10">
           {/* Hero Card */}
           <div className="bg-white border-2 border-retro-dark p-6 shadow-hard mb-6 relative">
               <div className="absolute -top-12 left-1/2 -translate-x-1/2 w-24 h-24 border-2 border-retro-dark bg-white p-1 shadow-hard-sm rotate-3">

@@ -145,9 +145,6 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ character, onBack, userAv
              </div>
           </div>
         </div>
-        <button className="text-retro-dark border-l-2 border-retro-grey pl-3">
-            <Icons.MoreVertical className="w-5 h-5" />
-        </button>
       </header>
 
       {/* Messages Area */}

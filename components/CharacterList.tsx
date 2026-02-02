@@ -18,7 +18,7 @@ const CharacterList: React.FC<CharacterListProps> = ({ characters, onSelectChara
         <div className="flex justify-between items-center">
           <div>
              <h1 className="text-xl font-sans font-bold text-retro-dark uppercase tracking-tighter">我的AI伙伴</h1>
-             <p className="text-[10px] font-mono text-retro-orange mt-1">{'> 数据库访问授权 GRANTED'}</p>
+             <p className="text-[10px] font-mono text-retro-orange mt-1">{`> 数据库访问授权 GRANTED`}</p>
           </div>
           <button
             onClick={onAddNew}

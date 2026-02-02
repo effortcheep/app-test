@@ -15,6 +15,7 @@ import CharacterDetail from './components/CharacterDetail';
 import TopicDetail from './components/TopicDetail';
 import MoodJournal from './components/MoodJournal';
 import SettingsScreen from './components/SettingsScreen';
+import FavoritesScreen from './components/FavoritesScreen';
 import { Icons } from './components/ui/Icon';
 
 const BGM_URL = "https://cdn.pixabay.com/audio/2022/01/21/audio_31743c58bd.mp3";
@@ -31,16 +32,55 @@ const App: React.FC = () => {
   
   const [isApiKeySet, setIsApiKeySet] = useState(false);
   
-  // Music State
+  // Music State (Default Off)
   const [isMusicPlaying, setIsMusicPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const audioCtxRef = useRef<AudioContext | null>(null);
 
   useEffect(() => {
-    // Initialize Music
+    // Initialize Music with Web Audio API for filter
     const audio = new Audio(BGM_URL);
     audio.loop = true;
-    audio.volume = 0.2; // 20% volume as requested
+    audio.crossOrigin = "anonymous"; // Essential for Web Audio API CORS
     audioRef.current = audio;
+
+    const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
+    if (AudioContextClass) {
+        const ctx = new AudioContextClass();
+        audioCtxRef.current = ctx;
+
+        try {
+            // Wait for metadata to be safer, though typically source creation is immediate
+            audio.addEventListener('canplay', () => {
+                // Check if source already created to prevent errors on re-renders/HMR
+                // In a strict effect cleanup, this is fine, but double check logic
+            });
+
+            const source = ctx.createMediaElementSource(audio);
+            
+            // Create Low Pass Filter
+            const filter = ctx.createBiquadFilter();
+            filter.type = 'lowpass';
+            filter.frequency.value = 800; // 800Hz cutoff for Lo-Fi/Muffled sound
+            filter.Q.value = 1;
+
+            // Create Gain Node for Volume (MediaElementSource ignores audio.volume)
+            const gainNode = ctx.createGain();
+            gainNode.gain.value = 0.2; // 20% Volume
+
+            // Connect graph: Source -> Filter -> Gain -> Destination
+            source.connect(filter);
+            filter.connect(gainNode);
+            gainNode.connect(ctx.destination);
+            
+        } catch (e) {
+            console.warn("Web Audio API setup error (likely CORS or state):", e);
+            // Fallback volume if Web Audio fails
+            audio.volume = 0.2;
+        }
+    } else {
+        audio.volume = 0.2;
+    }
 
     const apiKey = process.env.API_KEY;
     if (apiKey) {
@@ -66,6 +106,9 @@ const App: React.FC = () => {
             audioRef.current.pause();
             audioRef.current = null;
         }
+        if (audioCtxRef.current) {
+            audioCtxRef.current.close();
+        }
     };
   }, []);
 
@@ -81,31 +124,40 @@ const App: React.FC = () => {
     localStorage.setItem('healing_user', JSON.stringify(newUser));
     setView('chat_list');
     
-    // Auto-play music on login interaction
-    if (audioRef.current && !isMusicPlaying) {
-        audioRef.current.play()
-            .then(() => setIsMusicPlaying(true))
-            .catch(err => console.log("Auto-play prevented:", err));
-    }
+    // REMOVED: playMusic() - Default is now OFF
   };
 
   const handleLogout = () => {
     setUser(null);
     localStorage.removeItem('healing_user');
     setView('auth');
-    // Optional: Stop music on logout? Keeping it playing for vibe.
+    pauseMusic(); // Stop music on logout
+  };
+  
+  const playMusic = () => {
+      if (!audioRef.current) return;
+      
+      // Resume context if suspended (browser autoplay policy)
+      if (audioCtxRef.current && audioCtxRef.current.state === 'suspended') {
+          audioCtxRef.current.resume();
+      }
+
+      audioRef.current.play()
+        .then(() => setIsMusicPlaying(true))
+        .catch(err => console.log("Auto-play prevented:", err));
+  };
+
+  const pauseMusic = () => {
+      if (!audioRef.current) return;
+      audioRef.current.pause();
+      setIsMusicPlaying(false);
   };
   
   const toggleMusic = () => {
-      if (!audioRef.current) return;
-      
       if (isMusicPlaying) {
-          audioRef.current.pause();
-          setIsMusicPlaying(false);
+          pauseMusic();
       } else {
-          audioRef.current.play()
-            .then(() => setIsMusicPlaying(true))
-            .catch(err => console.error("Playback failed:", err));
+          playMusic();
       }
   };
 
@@ -139,7 +191,7 @@ const App: React.FC = () => {
           (target === 'chat_list' && view === 'chat') ||
           (target === 'character_list' && (view === 'character_detail' || view === 'character_wizard')) ||
           (target === 'topic_list' && view === 'topic_detail') ||
-          (target === 'profile' && (view === 'mood_journal' || view === 'settings'));
+          (target === 'profile' && (view === 'mood_journal' || view === 'settings' || view === 'favorites'));
           
       return (
         <button 
@@ -195,8 +247,25 @@ const App: React.FC = () => {
         );
     }
 
-    if (view === 'mood_journal') return <div className="h-full pb-24"><MoodJournal /></div>;
-    if (view === 'settings') return <div className="h-full pb-24"><SettingsScreen onBack={() => setView('profile')} /></div>;
+    // No nav views
+    if (view === 'mood_journal') {
+        return <MoodJournal onBack={() => setView('profile')} />;
+    }
+    
+    if (view === 'settings') {
+        return (
+            <SettingsScreen 
+                onBack={() => setView('profile')} 
+                user={user} 
+                isMusicPlaying={isMusicPlaying}
+                onToggleMusic={toggleMusic}
+            />
+        );
+    }
+
+    if (view === 'favorites') {
+        return <FavoritesScreen onBack={() => setView('profile')} onSelect={(t) => { setActiveTopic(t); setView('topic_detail'); }} />;
+    }
 
     // Tab Views (With Bottom Nav)
     let content = null;
@@ -233,6 +302,7 @@ const App: React.FC = () => {
                     onLogout={handleLogout} 
                     onOpenMood={() => setView('mood_journal')} 
                     onOpenSettings={() => setView('settings')} 
+                    onOpenFavorites={() => setView('favorites')}
                 />
             );
             break;
@@ -258,16 +328,6 @@ const App: React.FC = () => {
       {/* Mobile Shell: Use 100% dimensions but limit max-width for desktop compatibility */}
       <div className="w-full max-w-md h-full bg-retro-cream shadow-2xl relative flex flex-col overflow-hidden">
         <div className="scanlines absolute inset-0 z-50 pointer-events-none opacity-50"></div>
-        
-        {/* Music Toggle - Positioned above Nav and Safe Area */}
-        <button 
-            onClick={toggleMusic}
-            className="absolute bottom-24 left-6 z-[60] w-10 h-10 bg-retro-paper border-2 border-retro-dark shadow-hard flex items-center justify-center text-retro-dark hover:bg-retro-mustard transition-colors rounded-full mb-safe"
-            title={isMusicPlaying ? "Stop Music" : "Play Music"}
-        >
-            {isMusicPlaying ? <Icons.Music className="w-5 h-5 animate-pulse" /> : <Icons.VolumeX className="w-5 h-5 text-retro-grey" />}
-        </button>
-
         {renderContent()}
       </div>
     </div>
@@ -279,8 +339,8 @@ const TopicListWrapper = ({ onSelect }: any) => {
     return <TopicList onSelect={onSelect} />;
 };
 
-const ProfileScreenWrapper = ({ user, onLogout, onOpenMood, onOpenSettings }: any) => {
-    return <ProfileScreen user={user} onLogout={onLogout} onOpenMood={onOpenMood} onOpenSettings={onOpenSettings} />;
+const ProfileScreenWrapper = ({ user, onLogout, onOpenMood, onOpenSettings, onOpenFavorites }: any) => {
+    return <ProfileScreen user={user} onLogout={onLogout} onOpenMood={onOpenMood} onOpenSettings={onOpenSettings} onOpenFavorites={onOpenFavorites} />;
 };
 
 export default App;

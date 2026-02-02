@@ -59,13 +59,6 @@ const ChatSessionList: React.FC<ChatSessionListProps> = ({ characters, onSelectC
              </div>
          )}
       </div>
-
-      <button 
-        onClick={onNewChat}
-        className="absolute bottom-24 right-6 w-14 h-14 bg-retro-orange border-2 border-retro-dark shadow-hard flex items-center justify-center text-white hover:scale-110 transition-transform z-20"
-      >
-          <Icons.Plus className="w-8 h-8" />
-      </button>
     </div>
   );
 };

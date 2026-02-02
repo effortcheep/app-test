@@ -71,7 +71,8 @@ export type ViewState =
   | 'character_wizard' // Create/Edit Character (Steps)
   | 'topic_detail' // Topic Detail View
   | 'mood_journal' // Mood History
-  | 'settings'; // Settings
+  | 'settings' // Settings
+  | 'favorites'; // New: Favorites Screen
 
 export interface EmotionAnalysisResult {
   emotion: string;
